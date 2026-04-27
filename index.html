@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>NyaTi Score · Credit for the Unbanked | Kenya Fintech</title>
+  <!-- Tailwind + Font Awesome + Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: linear-gradient(135deg, #f5f7fc 0%, #eef2f6 100%); }
+    .score-gauge {
+      transition: all 0.2s ease;
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #e2e8f0;
+      height: 6px;
+      border-radius: 8px;
+    }
+    input[type="range"]:focus {
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #1e3a5f;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .card-hover {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card-hover:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+    }
+    .factor-bar {
+      transition: width 0.25s ease-out;
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <!-- Header -->
+    <div class="text-center mb-8 md:mb-10">
+      <div class="inline-flex items-center gap-2 bg-white/70 backdrop-blur-sm rounded-full px-4 py-1.5 shadow-sm mb-3">
+        <i class="fas fa-mobile-alt text-[#2c6e49] text-sm"></i>
+        <span class="text-xs font-semibold text-[#1e3a5f] tracking-wide">🇰🇪 ALTERNATIVE CREDIT DATA</span>
+        <i class="fas fa-hand-holding-usd text-[#2c6e49] text-sm"></i>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-[#0a2b3e]">TrustScore <span class="text-[#2c6e49]">NyaTi</span></h1>
+      <p class="text-gray-600 max-w-2xl mx-auto mt-2 text-sm md:text-base">M-Pesa · Chama · Savings · Repayments — your financial identity, no bank required.</p>
+    </div>
+
+    <!-- Main Grid: left controls / right score + loan -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- LEFT: Behaviour inputs (aggregated data simulation) -->
+      <div class="lg:col-span-2 space-y-5">
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-5 card-hover">
+          <h2 class="text-lg font-bold text-[#1e3a5f] flex items-center gap-2"><i class="fas fa-chart-line text-[#2c6e49]"></i> Aggregate behaviour</h2>
+          <p class="text-xs text-gray-500 mb-4">Simulate M-Pesa activity, savings, chamas & repayment discipline</p>
+          
+          <div class="space-y-5">
+            <!-- M-Pesa volume -->
+            <div>
+              <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                <span><i class="fas fa-exchange-alt text-[#2c6e49] mr-1"></i> Monthly M-Pesa volume (KSh)</span>
+                <span id="volumeVal" class="font-mono font-bold">75,000 KSh</span>
+              </div>
+              <input type="range" id="mpesaVolume" min="0" max="200000" step="1000" value="75000" class="w-full">
+              <p class="text-[11px] text-gray-400 mt-1">Fuliza / business & personal transfers</p>
+            </div>
+            <!-- Transaction frequency -->
+            <div>
+              <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                <span><i class="fas fa-hashtag text-[#2c6e49] mr-1"></i> Transactions per month</span>
+                <span id="freqVal" class="font-mono font-bold">50</span>
+              </div>
+              <input type="range" id="txnFreq" min="0" max="200" step="1" value="50" class="w-full">
+            </div>
+            <!-- Savings balance -->
+            <div>
+              <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                <span><i class="fas fa-piggy-bank text-[#2c6e49] mr-1"></i> Avg savings balance (KSh)</span>
+                <span id="savingsVal" class="font-mono font-bold">120,000 KSh</span>
+              </div>
+              <input type="range" id="savingsBalance" min="0" max="500000" step="2000" value="120000" class="w-full">
+              <p class="text-[11px] text-gray-400 mt-1">Hustler Fund / bank / mobile wallet savings</p>
+            </div>
+            <!-- Repayment punctuality -->
+            <div>
+              <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                <span><i class="fas fa-calendar-check text-[#2c6e49] mr-1"></i> On-time repayments (Fuliza / Loans)</span>
+                <span id="repayVal" class="font-mono font-bold">75%</span>
+              </div>
+              <input type="range" id="repayPunctuality" min="0" max="100" step="1" value="75" class="w-full">
+            </div>
+            <!-- Chama participation -->
+            <div>
+              <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                <span><i class="fas fa-users text-[#2c6e49] mr-1"></i> Chama commitment</span>
+                <span id="chamaLabel" class="font-medium text-gray-600">Regular</span>
+              </div>
+              <select id="chamaSelect" class="w-full p-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:ring-[#2c6e49] focus:border-[#2c6e49]">
+                <option value="none">❌ No chama involvement</option>
+                <option value="occasional">🔄 Occasional contributions</option>
+                <option value="regular" selected>✅ Regular chama member</option>
+                <option value="highly-active">🌟 Highly active / chama leader</option>
+              </select>
+            </div>
+            <!-- M-Pesa tenure -->
+            <div>
+              <div class="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                <span><i class="fas fa-clock text-[#2c6e49] mr-1"></i> M-Pesa account tenure (years)</span>
+                <span id="tenureVal" class="font-mono font-bold">3.0 yrs</span>
+              </div>
+              <input type="range" id="tenureYears" min="0" max="10" step="0.5" value="3" class="w-full">
+            </div>
+          </div>
+
+          <!-- Preset examples -->
+          <div class="mt-6 pt-2 flex flex-wrap gap-2">
+            <button id="presetLow" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-1.5 rounded-full transition"><i class="fas fa-chart-simple mr-1"></i> Low activity</button>
+            <button id="presetMid" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full transition"><i class="fas fa-chart-line mr-1"></i> Average Kenyan</button>
+            <button id="presetHigh" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-1.5 rounded-full transition"><i class="fas fa-chart-line mr-1"></i> High trust profile</button>
+          </div>
+        </div>
+
+        <!-- WHY SCORE LOW/HIGH + factor insights -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-5">
+          <h2 class="text-lg font-bold text-[#1e3a5f] flex items-center gap-2"><i class="fas fa-lightbulb text-amber-500"></i> Why your score is <span id="scoreCategoryBadge" class="ml-2 text-sm bg-gray-200 px-2 py-0.5 rounded-full">—</span></h2>
+          <div id="explanationList" class="mt-3 space-y-2 text-sm">
+            <!-- dynamic explanation items -->
+          </div>
+          <div class="mt-4 bg-gray-50 p-3 rounded-xl text-xs text-gray-600">
+            <i class="fas fa-chart-simple mr-1"></i> <strong>NyaTi insight:</strong> <span id="dynamicAdvice">Adjust sliders to see how M-Pesa usage, savings & chama build your digital credit worthiness.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Credit score + loan eligibility panel -->
+      <div class="space-y-6">
+        <!-- Score Card -->
+        <div class="bg-gradient-to-br from-[#0a2b3e] to-[#123e55] rounded-2xl shadow-xl p-6 text-white text-center">
+          <div class="text-sm uppercase tracking-wider opacity-80">Trust Score · Alternative credit</div>
+          <div class="text-6xl md:text-7xl font-black mt-2" id="creditScoreDisplay">482</div>
+          <div class="text-md font-medium mt-1 opacity-90" id="scoreRating">Fair · Building history</div>
+          <div class="w-full bg-white/20 rounded-full h-2 mt-4">
+            <div id="scoreProgressBar" class="bg-[#2c6e49] h-2 rounded-full" style="width: 56.7%;"></div>
+          </div>
+          <div class="flex justify-between text-[11px] opacity-70 mt-1">
+            <span>0 Poor</span><span>500 Fair</span><span>650 Good</span><span>850 Excellent</span>
+          </div>
+          <div class="mt-5 flex justify-center gap-3 text-[13px]">
+            <div class="bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-chart-line mr-1"></i> Data-driven</div>
+            <div class="bg-white/10 px-3 py-1 rounded-full"><i class="fas fa-shield-alt mr-1"></i> No traditional bureau</div>
+          </div>
+        </div>
+
+        <!-- Loan eligibility simulator -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-5 card-hover">
+          <h3 class="font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-hand-holding-usd text-[#2c6e49]"></i> Loan eligibility simulation</h3>
+          <div class="mt-3 space-y-3">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+              <span class="text-gray-600 text-sm">📱 Max loan offer</span>
+              <span class="font-bold text-xl text-[#1e3a5f]" id="loanAmount">KSh 0</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+              <span class="text-gray-600 text-sm">📉 Interest rate (p.a)</span>
+              <span class="font-semibold text-emerald-700" id="interestRate">— %</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600 text-sm">⏱️ Suggested term</span>
+              <span class="font-medium" id="loanTerm">— months</span>
+            </div>
+            <div class="bg-gray-50 p-3 rounded-xl text-xs mt-2">
+              <i class="fas fa-wallet text-[#2c6e49] mr-1"></i> <span id="monthlyInstallment">Simulated monthly repayment: —</span>
+            </div>
+            <button id="simulateLoanInfo" class="w-full mt-2 bg-[#2c6e49] hover:bg-[#1f543a] text-white text-sm font-medium py-2 rounded-xl transition shadow-sm">
+              <i class="fas fa-sync-alt mr-1"></i> Refresh simulation
+            </button>
+          </div>
+        </div>
+        
+        <!-- quick trust meter factor summary -->
+        <div class="bg-white/60 rounded-xl p-4 text-center text-xs text-gray-500 border border-dashed border-gray-200">
+          <i class="fas fa-chart-pie mr-1"></i> Powered by M-Pesa, Fuliza behavior, savings, chama social collateral & repayment consistency.
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed factor contribution bars (transparency) -->
+    <div class="mt-8 bg-white/70 backdrop-blur-sm rounded-2xl border border-white/50 p-5">
+      <h3 class="font-semibold text-gray-800 mb-3 text-sm flex items-center"><i class="fas fa-chart-simple mr-2 text-[#2c6e49]"></i> What builds your score? Factor breakdown</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+        <div><div class="flex justify-between"><span>💰 M-Pesa volume</span><span id="volScorePct" class="font-mono">0%</span></div><div class="w-full bg-gray-200 rounded-full h-1.5 mt-1"><div id="volBar" class="bg-[#2c6e49] h-1.5 rounded-full factor-bar" style="width:0%"></div></div></div>
+        <div><div class="flex justify-between"><span>🔄 Transaction frequency</span><span id="freqScorePct" class="font-mono">0%</span></div><div class="w-full bg-gray-200 rounded-full h-1.5 mt-1"><div id="freqBar" class="bg-[#2c6e49] h-1.5 rounded-full factor-bar" style="width:0%"></div></div></div>
+        <div><div class="flex justify-between"><span>🏦 Savings balance</span><span id="savScorePct" class="font-mono">0%</span></div><div class="w-full bg-gray-200 rounded-full h-1.5 mt-1"><div id="savBar" class="bg-[#2c6e49] h-1.5 rounded-full factor-bar" style="width:0%"></div></div></div>
+        <div><div class="flex justify-between"><span>✅ Repayment punctuality</span><span id="repScorePct" class="font-mono">0%</span></div><div class="w-full bg-gray-200 rounded-full h-1.5 mt-1"><div id="repBar" class="bg-[#2c6e49] h-1.5 rounded-full factor-bar" style="width:0%"></div></div></div>
+        <div><div class="flex justify-between"><span>👥 Chama commitment</span><span id="chamaScorePct" class="font-mono">0%</span></div><div class="w-full bg-gray-200 rounded-full h-1.5 mt-1"><div id="chamaBar" class="bg-[#2c6e49] h-1.5 rounded-full factor-bar" style="width:0%"></div></div></div>
+        <div><div class="flex justify-between"><span>⏳ M-Pesa tenure</span><span id="tenureScorePct" class="font-mono">0%</span></div><div class="w-full bg-gray-200 rounded-full h-1.5 mt-1"><div id="tenureBar" class="bg-[#2c6e49] h-1.5 rounded-full factor-bar" style="width:0%"></div></div></div>
+      </div>
+      <p class="text-[11px] text-gray-400 text-center mt-4">*Each factor contributes to the final TrustScore using real alternative credit logic (weights: volume 20%, freq 10%, savings 30%, repayment 20%, chama 10%, tenure 10%).</p>
+    </div>
+  </div>
+
+  <script>
+    // DOM elements
+    const volumeSlider = document.getElementById('mpesaVolume');
+    const freqSlider = document.getElementById('txnFreq');
+    const savingsSlider = document.getElementById('savingsBalance');
+    const repaySlider = document.getElementById('repayPunctuality');
+    const chamaSelect = document.getElementById('chamaSelect');
+    const tenureSlider = document.getElementById('tenureYears');
+    
+    // display spans
+    const volumeVal = document.getElementById('volumeVal');
+    const freqVal = document.getElementById('freqVal');
+    const savingsVal = document.getElementById('savingsVal');
+    const repayVal = document.getElementById('repayVal');
+    const chamaLabelSpan = document.getElementById('chamaLabel');
+    const tenureValSpan = document.getElementById('tenureVal');
+    const creditScoreSpan = document.getElementById('creditScoreDisplay');
+    const scoreRatingSpan = document.getElementById('scoreRating');
+    const scoreProgressBar = document.getElementById('scoreProgressBar');
+    const scoreCategoryBadge = document.getElementById('scoreCategoryBadge');
+    const explanationDiv = document.getElementById('explanationList');
+    const dynamicAdviceSpan = document.getElementById('dynamicAdvice');
+    
+    // loan elements
+    const loanAmountSpan = document.getElementById('loanAmount');
+    const interestRateSpan = document.getElementById('interestRate');
+    const loanTermSpan = document.getElementById('loanTerm');
+    const monthlyInstallmentSpan = document.getElementById('monthlyInstallment');
+    
+    // factor percentages
+    const volScorePct = document.getElementById('volScorePct');
+    const freqScorePct = document.getElementById('freqScorePct');
+    const savScorePct = document.getElementById('savScorePct');
+    const repScorePct = document.getElementById('repScorePct');
+    const chamaScorePct = document.getElementById('chamaScorePct');
+    const tenureScorePct = document.getElementById('tenureScorePct');
+    const volBar = document.getElementById('volBar');
+    const freqBar = document.getElementById('freqBar');
+    const savBar = document.getElementById('savBar');
+    const repBar = document.getElementById('repBar');
+    const chamaBar = document.getElementById('chamaBar');
+    const tenureBar = document.getElementById('tenureBar');
+
+    // Helper: format KSh
+    function formatKSh(value) {
+      return Math.round(value).toLocaleString() + ' KSh';
+    }
+
+    // Chama mapping to numeric score (0-100)
+    function getChamaScore(value) {
+      switch(value) {
+        case 'none': return 0;
+        case 'occasional': return 33;
+        case 'regular': return 66;
+        case 'highly-active': return 100;
+        default: return 66;
+      }
+    }
+    
+    function getChamaLabel(value) {
+      switch(value) {
+        case 'none': return '❌ No chama';
+        case 'occasional': return '🔄 Occasional';
+        case 'regular': return '✅ Regular';
+        case 'highly-active': return '🌟 Highly active';
+        default: return 'Regular';
+      }
+    }
+
+    // Individual factor scores (0-100) using realistic scaling
+    function computeVolumeScore(volume) {
+      // volume up to 200k, 200k gives 100, 100k gives 65 approx
+      return Math.min(100, (volume / 180000) * 100);
+    }
+    function computeFreqScore(freq) {
+      // max 200 transactions -> score: 100 for 200, typical 50 gives ~41
+      return Math.min(100, (freq / 180) * 100);
+    }
+    function computeSavingsScore(savings) {
+      // up to 500k, but base: 150k gives ~60, 400k gives 80
+      return Math.min(100, (savings / 450000) * 100);
+    }
+    function computeRepayScore(percent) {
+      return percent; // already 0-100
+    }
+    function computeTenureScore(years) {
+      return Math.min(100, (years / 10) * 100);
+    }
+
+    // Weights
+    const WEIGHTS = {
+      volume: 0.20,
+      freq: 0.10,
+      savings: 0.30,
+      repayment: 0.20,
+      chama: 0.10,
+      tenure: 0.10
+    };
+
+    function updateAll() {
+      // get raw values
+      let volume = parseFloat(volumeSlider.value);
+      let freq = parseFloat(freqSlider.value);
+      let savings = parseFloat(savingsSlider.value);
+      let repayPct = parseFloat(repaySlider.value);
+      let chamaRaw = chamaSelect.value;
+      let tenureYears = parseFloat(tenureSlider.value);
+      
+      // update displayed values
+      volumeVal.innerText = formatKSh(volume);
+      freqVal.innerText = Math.floor(freq);
+      savingsVal.innerText = formatKSh(savings);
+      repayVal.innerText = Math.floor(repayPct) + '%';
+      chamaLabelSpan.innerText = getChamaLabel(chamaRaw);
+      tenureValSpan.innerText = tenureYears.toFixed(1) + ' yrs';
+      
+      // compute sub-scores
+      let volScore = computeVolumeScore(volume);
+      let freqScore = computeFreqScore(freq);
+      let savScore = computeSavingsScore(savings);
+      let repayScore = computeRepayScore(repayPct);
+      let chamaScore = getChamaScore(chamaRaw);
+      let tenureScore = computeTenureScore(tenureYears);
+      
+      // weighted raw (0-100)
+      let rawScore = (volScore * WEIGHTS.volume) +
+                     (freqScore * WEIGHTS.freq) +
+                     (savScore * WEIGHTS.savings) +
+                     (repayScore * WEIGHTS.repayment) +
+                     (chamaScore * WEIGHTS.chama) +
+                     (tenureScore * WEIGHTS.tenure);
+      
+      // final credit score 0-850 mapping
+      let creditScore = Math.min(850, Math.max(0, Math.round(rawScore * 8.5)));
+      
+      // update UI score
+      creditScoreSpan.innerText = creditScore;
+      let percentBar = (creditScore / 850) * 100;
+      scoreProgressBar.style.width = `${percentBar}%`;
+      
+      // rating text & badge
+      let ratingText = '';
+      let badgeColor = '';
+      if (creditScore < 500) { ratingText = '⚠️ Poor · Build trust'; badgeColor = 'bg-rose-100 text-rose-700'; }
+      else if (creditScore < 650) { ratingText = '📈 Fair · Growing history'; badgeColor = 'bg-amber-100 text-amber-700'; }
+      else if (creditScore < 750) { ratingText = '🌟 Good · Reliable borrower'; badgeColor = 'bg-emerald-100 text-emerald-700'; }
+      else { ratingText = '🏆 Excellent · High trust'; badgeColor = 'bg-teal-100 text-teal-800'; }
+      scoreRatingSpan.innerText = ratingText;
+      scoreCategoryBadge.innerText = ratingText.split('·')[0].trim();
+      scoreCategoryBadge.className = `ml-2 text-xs px-2 py-0.5 rounded-full ${badgeColor}`;
+      
+      // update factor bars and percentages
+      volScorePct.innerText = Math.round(volScore) + '%';
+      freqScorePct.innerText = Math.round(freqScore) + '%';
+      savScorePct.innerText = Math.round(savScore) + '%';
+      repScorePct.innerText = Math.round(repayScore) + '%';
+      chamaScorePct.innerText = Math.round(chamaScore) + '%';
+      tenureScorePct.innerText = Math.round(tenureScore) + '%';
+      volBar.style.width = `${volScore}%`;
+      freqBar.style.width = `${freqScore}%`;
+      savBar.style.width = `${savScore}%`;
+      repBar.style.width = `${repayScore}%`;
+      chamaBar.style.width = `${chamaScore}%`;
+      tenureBar.style.width = `${tenureScore}%`;
+      
+      // Generate "why score low/high" explanations (strengths & weaknesses)
+      generateExplanations(volScore, freqScore, savScore, repayScore, chamaScore, tenureScore, creditScore);
+      
+      // Loan eligibility simulation
+      simulateLoan(creditScore, savings, repayPct, volume);
+    }
+    
+    function generateExplanations(vol, freq, sav, repay, chama, tenure, creditScore) {
+      let factors = [
+        { name: 'M-Pesa transaction volume', score: vol, weight: 'high activity boosts trust', lowMsg: 'Low transaction flow → increase usage frequency' },
+        { name: 'Transaction frequency', score: freq, lowMsg: 'Few monthly transactions → show consistency' },
+        { name: 'Savings behavior', score: sav, lowMsg: 'Low savings buffer → save regularly (even small amounts)' },
+        { name: 'Repayment record', score: repay, lowMsg: 'Late repayments hurt score → stay on time with Fuliza/Hustler' },
+        { name: 'Chama commitment', score: chama, lowMsg: 'No chama reduces social collateral → join active group' },
+        { name: 'M-Pesa tenure', score: tenure, lowMsg: 'Short digital footprint → older accounts build trust' }
+      ];
+      let highItems = factors.filter(f => f.score >= 68);
+      let lowItems = factors.filter(f => f.score < 50);
+      
+      let html = '';
+      if (creditScore >= 650) {
+        html += `<div class="text-emerald-700 text-xs font-medium flex items-center gap-1"><i class="fas fa-thumbs-up"></i> Strong areas: </div><ul class="list-disc pl-5 text-gray-700">`;
+        highItems.slice(0,3).forEach(h => { html += `<li>✅ ${h.name} (${Math.round(h.score)}%) – ${h.weight || 'excellent'}</li>`; });
+        html += `</ul>`;
+        if (lowItems.length) html += `<div class="mt-2 text-amber-700 text-xs font-medium">Opportunities to improve:</div><ul class="list-disc pl-5 text-gray-600">${lowItems.map(l => `<li>⚠️ ${l.name}: ${l.lowMsg}</li>`).join('')}</ul>`;
+        else html += `<p class="text-xs text-gray-600 mt-2">✨ Excellent alternative profile! You qualify for premium loan terms.</p>`;
+      } 
+      else if (creditScore < 500) {
+        html += `<div class="text-rose-600 text-xs font-medium"><i class="fas fa-exclamation-triangle"></i> Main gaps:</div><ul class="list-disc pl-5 text-gray-700">`;
+        lowItems.slice(0,4).forEach(l => { html += `<li>🔻 ${l.name}: ${l.lowMsg}</li>`; });
+        html += `</ul><div class="mt-2 text-xs bg-rose-50 p-2 rounded">📌 Tip: Start saving via M-Pesa, join a chama, and repay Fuliza on time to build digital credit.</div>`;
+      } 
+      else {
+        html += `<div class="text-gray-700 text-xs font-medium">📊 Mixed performance:</div><ul class="list-disc pl-5 text-gray-600 space-y-0.5">`;
+        if (lowItems.length) html += `<li>⚠️ Focus: ${lowItems.map(l=>l.name).slice(0,2).join(', ')} – ${lowItems[0]?.lowMsg}</li>`;
+        if (highItems.length) html += `<li>✅ Strong: ${highItems.map(h=>h.name).slice(0,2).join(', ')}</li>`;
+        html += `</ul><p class="text-xs text-gray-500 mt-1">Raise savings & repayment consistency to reach 'Good' tier.</p>`;
+      }
+      explanationDiv.innerHTML = html;
+      
+      // dynamic advice
+      if (repay < 60) dynamicAdviceSpan.innerText = "🔔 On-time repayments have huge impact. Improve Fuliza punctuality to boost score quickly.";
+      else if (sav < 40) dynamicAdviceSpan.innerText = "💰 Building even KSh 10k monthly savings enhances trust and loan access.";
+      else if (chama < 50) dynamicAdviceSpan.innerText = "👥 Chama participation signals social accountability — consider an active group.";
+      else dynamicAdviceSpan.innerText = "📱 Your digital financial footprint looks promising. Maintain consistency for higher loan limits.";
+    }
+    
+    function simulateLoan(creditScore, savingsBalance, repaymentPct, mpesaVolume) {
+      // base eligibility: credit influence + savings factor + repayment reliability
+      let scoreFactor = creditScore / 850; // 0-1
+      let savingsBoost = Math.min(250000, savingsBalance * 0.4);
+      let volumeSignal = Math.min(80000, mpesaVolume * 0.2);
+      let baseEligibility = (scoreFactor * 300000) + savingsBoost + (repaymentPct / 100) * 70000;
+      let maxLoan = Math.min(550000, Math.max(5000, Math.floor(baseEligibility)));
+      
+      // interest rate: lower score -> higher risk
+      let interestRate = 8 + ((850 - creditScore) / 35);
+      interestRate = Math.min(28, Math.max(6, Math.round(interestRate * 10) / 10));
+      
+      // choose term: excellent long term, low score short term
+      let termMonths = 6;
+      if (creditScore >= 750) termMonths = 12;
+      else if (creditScore >= 600) termMonths = 9;
+      else termMonths = 6;
+      
+      // monthly installment approximate (simple interest)
+      let principal = maxLoan;
+      let monthlyRate = (interestRate / 100) / 12;
+      let monthlyPayment = 0;
+      if (principal > 0 && termMonths > 0) {
+        monthlyPayment = principal * monthlyRate * Math.pow(1+monthlyRate, termMonths) / (Math.pow(1+monthlyRate, termMonths) - 1);
+        if (!isFinite(monthlyPayment)) monthlyPayment = principal / termMonths;
+      }
+      monthlyPayment = Math.round(monthlyPayment);
+      
+      loanAmountSpan.innerText = formatKSh(maxLoan);
+      interestRateSpan.innerText = interestRate + '%';
+      loanTermSpan.innerText = termMonths + ' months';
+      monthlyInstallmentSpan.innerText = `~${formatKSh(monthlyPayment)}/month (est.)`;
+    }
+    
+    // attach listeners
+    const inputs = [volumeSlider, freqSlider, savingsSlider, repaySlider, chamaSelect, tenureSlider];
+    inputs.forEach(inp => inp.addEventListener('input', updateAll));
+    
+    // presets
+    document.getElementById('presetLow').addEventListener('click', () => {
+      volumeSlider.value = 15000; freqSlider.value = 12; savingsSlider.value = 8000; repaySlider.value = 45; chamaSelect.value = 'none'; tenureSlider.value = 1;
+      updateAll();
+    });
+    document.getElementById('presetMid').addEventListener('click', () => {
+      volumeSlider.value = 75000; freqSlider.value = 50; savingsSlider.value = 120000; repaySlider.value = 75; chamaSelect.value = 'regular'; tenureSlider.value = 3;
+      updateAll();
+    });
+    document.getElementById('presetHigh').addEventListener('click', () => {
+      volumeSlider.value = 165000; freqSlider.value = 140; savingsSlider.value = 380000; repaySlider.value = 96; chamaSelect.value = 'highly-active'; tenureSlider.value = 7.5;
+      updateAll();
+    });
+    document.getElementById('simulateLoanInfo').addEventListener('click', () => {
+      updateAll(); // just refreshes with current values
+    });
+    
+    // initial call
+    updateAll();
+  </script>
+</body>
+</html>
