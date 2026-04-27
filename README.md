@@ -1,0 +1,1 @@
+# NyaTi-Score-Credit-for-the-Unbanked-Kenya-Fintech
